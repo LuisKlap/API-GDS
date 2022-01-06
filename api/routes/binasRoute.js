@@ -5,6 +5,7 @@ const BinaController = require('../controller/BinaController')
 const router = Router()
 
 router.get('/bina', BinaController.findAllBinas)
+router.get('/bina/ativo', BinaController.findAllBinasAtivas)
 router.get('/bina/:id', BinaController.findOneBina)
 router.post('/bina/save', BinaController.saveBina)
 router.delete('/bina/:id', BinaController.deletaBina)

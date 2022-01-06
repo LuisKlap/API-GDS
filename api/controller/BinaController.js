@@ -11,6 +11,20 @@ class BinaController extends ChaveController{
         data_inicial ? where.dataRequisicao[Op.gte] = data_inicial : null
         data_final ? where.dataRequisicao[Op.lte] = data_final : null
         try {
+            const todasAsBinas = await database.Bina.scope('todos').findAll({ where })
+            return res.status(200).json(todasAsBinas)
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    }
+
+    static async findAllBinasAtivas(req, res) {
+        const { data_inicial, data_final } = req.query
+        const where = {}
+        data_inicial || data_final ? where.dataRequisicao = {} : null
+        data_inicial ? where.dataRequisicao[Op.gte] = data_inicial : null
+        data_final ? where.dataRequisicao[Op.lte] = data_final : null
+        try {
             const todasAsBinas = await database.Bina.findAll({ where })
             return res.status(200).json(todasAsBinas)
         } catch (error) {
@@ -34,9 +48,19 @@ class BinaController extends ChaveController{
 
     static async saveBina(req, res){
         const objBina = req.body;
+        const {chave} = req.body
         
         try {
             const novaBinaCriada = await database.Bina.create(objBina)
+            console.log(chave)
+            database.sequelize.transaction(async transacao => {
+               if (await database.Chaves.scope('todos').findOne({ ativo: false,  id: Number(chave) }, {transaction: transacao})){
+                await database.Bina.scope('todos').update({ status: 'cancelado' }, {where: {chave : Number(chave)}}, {transaction: transacao})
+               }else{
+                await database.Bina.scope('todos').update({ status: 'confirmado' }, {where: {chave : Number(chave)}}, {transaction: transacao})
+               }
+               
+            })
             
             return res.status(200).json([novaBinaCriada])
         } catch (error) {
@@ -73,7 +97,7 @@ class BinaController extends ChaveController{
         try {
             database.sequelize.transaction(async transacao => {
                 await database.Chaves.scope('todos').update({ ativo: false }, {where: {id : Number(id)}}, {transaction: transacao})
-                await database.Bina.update({ status: 'cancelado' }, {where: {chave : Number(id)}}, {transaction: transacao})
+                await database.Bina.scope('todos').update({ status: 'cancelado' }, {where: {chave : Number(id)}}, {transaction: transacao})
             })
         
         return res.status(200).json({ where: ` ${id} Atualiado!`})
@@ -88,10 +112,10 @@ class BinaController extends ChaveController{
         try {
             database.sequelize.transaction(async transacao => {
                 await database.Chaves.scope('todos').update({ ativo: true }, {where: {id : Number(id)}}, {transaction: transacao})
-                await database.Bina.update({ status: 'confirmado' }, {where: {chave : Number(id)}}, {transaction: transacao})
+                await database.Bina.scope('todos').update({ status: 'confirmado' }, {where: {chave : Number(id)}}, {transaction: transacao})
             })
         
-        return res.status(200).json({ where: `Binas referente a chave id ${id} canceladas!`})
+        return res.status(200).json({ where: `Binas referente a chave id ${id} confirmadas!`})
         } catch (error) {
             return res.status(500).json(error.message)
         }

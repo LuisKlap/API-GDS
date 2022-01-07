@@ -4,35 +4,32 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Bina extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+
     static associate(models) {
       Bina.belongsTo(models.Chaves, {
         foreignKey: 'chave'
       })
     }
   };
+
   Bina.init({
-    numeroChamador:{ 
+    numeroChamador: {
       type: DataTypes.STRING,
       validate: {
-        
-        funcaoValidadora: function(dado) {
+
+        funcaoValidadora: function (dado) {
           console.log(dado.length)
-          if (dado.length != 11) throw new Error ('Número de celular inválido!')
+          if (dado.length != 11) throw new Error('Número de celular inválido!')
         }
-        
+
       }
     },
-    numeroReceptor:{ 
+    numeroReceptor: {
       type: DataTypes.STRING,
       validate: {
-        funcaoValidadora: function(dado) {
+        funcaoValidadora: function (dado) {
           console.log(dado.length)
-          if (dado.length != 11) throw new Error ('Número de celular inválido!')
+          if (dado.length != 11) throw new Error('Número de celular inválido!')
         }
       }
     },
@@ -46,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       where: { status: 'confirmado' }
     },
     scopes: {
-      todos: {where: {} }
+      todos: { where: {} }
     },
     modelName: 'Bina',
   });

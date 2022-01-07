@@ -74,7 +74,7 @@ class BinaController extends ChaveController{
     static async deletaBina(req,res){
         const {id} = req.params
         try {
-            await database.Bina.destroy({where: {id: String(id)}})
+            await database.Bina.scope('todos').destroy({where: {id: String(id)}})
             return res.status(200).json({mensagem: `bina "${id}" foi deletada!`})
         } catch (error) {
             return res.status(500).json(error.message)
@@ -124,7 +124,7 @@ class BinaController extends ChaveController{
     static async binaPorDevice(req, res){
         const { deviceId } = req.params
         try {
-            const listaDoDevice = await database.Bina.scope('todos').findAndCountAll({
+            const listaDoDevice = await database.Bina.findAndCountAll({
                 where: {
                     deviceId: String(deviceId)
                 },

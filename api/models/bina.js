@@ -20,11 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         
-        // isNumeric: {
-        //   args: true,
-        //   msg: 'Número de celular inválido!'
-        // },
-
         funcaoValidadora: function(dado) {
           console.log(dado.length)
           if (dado.length != 11) throw new Error ('Número de celular inválido!')

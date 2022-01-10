@@ -41,6 +41,7 @@ class BinaController extends ChaveController{
                 where: { 
                     deviceId: String(deviceId) 
                 },
+                // include: {association: chave},
                 limit: 3,
                 order: [['id', 'DESC']]
             })
@@ -119,22 +120,6 @@ class BinaController extends ChaveController{
             })
         
         return res.status(200).json({ where: `Binas referente a chave id ${id} confirmadas!`})
-        } catch (error) {
-            return res.status(500).json(error.message)
-        }
-    }
-
-    static async binaPorDevice(req, res){
-        const { deviceId } = req.params
-        try {
-            const listaDoDevice = await database.Bina.findAndCountAll({
-                where: {
-                    deviceId: String(deviceId)
-                },
-                limit: 1,
-                order: [['id', 'DESC']]
-            })
-            return res.status(200).json(listaDoDevice)
         } catch (error) {
             return res.status(500).json(error.message)
         }

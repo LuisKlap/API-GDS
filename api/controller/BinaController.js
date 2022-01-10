@@ -11,7 +11,8 @@ class BinaController extends ChaveController{
         data_inicial ? where.dataRequisicao[Op.gte] = data_inicial : null
         data_final ? where.dataRequisicao[Op.lte] = data_final : null
         try {
-            const todasAsBinas = await database.Bina.scope('todos').findAll({ where })
+            const todasAsBinas = await database.Bina.scope('todos').findAndCountAll({ where,
+                order: [['id', 'DESC']] })
             return res.status(200).json(todasAsBinas)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -25,7 +26,8 @@ class BinaController extends ChaveController{
         data_inicial ? where.dataRequisicao[Op.gte] = data_inicial : null
         data_final ? where.dataRequisicao[Op.lte] = data_final : null
         try {
-            const todasAsBinas = await database.Bina.findAll({ where })
+            const todasAsBinas = await database.Bina.findAndCountAll({ where ,
+                order: [['id', 'DESC']]})
             return res.status(200).json(todasAsBinas)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -35,10 +37,12 @@ class BinaController extends ChaveController{
     static async findOneBina(req, res,) {
         const { deviceId } = req.params
         try {
-            const umaBina = await database.Bina.findOne({ 
+            const umaBina = await database.Bina.findAndCountAll({ 
                 where: { 
                     deviceId: String(deviceId) 
-                } 
+                },
+                limit: 3,
+                order: [['id', 'DESC']]
             })
             return res.status(200).json(umaBina)
         } catch (error) {
@@ -52,9 +56,8 @@ class BinaController extends ChaveController{
         
         try {
             const novaBinaCriada = await database.Bina.create(objBina)
-            console.log(chave)
             database.sequelize.transaction(async transacao => {
-               if (await database.Chaves.scope('todos').findOne({ ativo: false,  id: Number(chave) }, {transaction: transacao})){
+               if (await database.Chaves.scope('todos').findOne({where:{ ativo: false,  id: Number(chave) }}, {transaction: transacao})){
                 await database.Bina.scope('todos').update({ status: 'cancelado' }, {where: {chave : Number(chave)}}, {transaction: transacao})
                }else{
                 await database.Bina.scope('todos').update({ status: 'confirmado' }, {where: {chave : Number(chave)}}, {transaction: transacao})

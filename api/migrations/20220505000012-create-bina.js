@@ -18,7 +18,8 @@ module.exports = {
         type: Sequelize.DATEONLY
       },
       deviceId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       chave: {
         allowNull: false,

@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
 
         funcaoValidadora: function (dado) {
-          console.log(dado.length)
           if (dado.length != 11) throw new Error('Número de celular inválido!')
         }
 
@@ -28,13 +27,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         funcaoValidadora: function (dado) {
-          console.log(dado.length)
           if (dado.length != 11) throw new Error('Número de celular inválido!')
         }
       }
     },
     dataRequisicao: DataTypes.DATEONLY,
-    deviceId: DataTypes.STRING,
+    deviceId: {
+      type: DataTypes.STRING,
+      unique: true
+    },
     status: DataTypes.STRING
   }, {
     sequelize,

@@ -75,21 +75,33 @@ class BinaController extends ChaveController{
         }
     }
 
-    static async deletaBina(req,res){
-        const {id} = req.params
+    static async atualizaBina(req,res) {
+        const {deviceId} = req.params
+        const novasInfos = req.body
         try {
-            await database.Bina.scope('todos').destroy({where: {id: String(id)}})
-            return res.status(200).json({mensagem: `bina "${id}" foi deletada!`})
+            await database.Bina.update(novasInfos, {where: {deviceId: Number(deviceId)}})
+            const binaAtualizada = await database.Bina.findOne({ where: {deviceId: Number(deviceId)}})
+            return res.status(200).json(binaAtualizada)
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    }
+
+    static async deletaBina(req,res){
+        const {deviceId} = req.params
+        try {
+            await database.Bina.scope('todos').destroy({where: {deviceId: String(deviceId)}})
+            return res.status(200).json({mensagem: `bina "${deviceId}" foi deletada!`})
         } catch (error) {
             return res.status(500).json(error.message)
         }
     }
 
     static async restauraBina(req, res) {
-        const {id} = req.params
+        const {deviceId} = req.params
         try {
-            await database.Bina.restore({where: {id: String(id)}})
-            return res.status(200).json({ where: `id ${id} restaurado`})
+            await database.Bina.restore({where: {deviceId: String(deviceId)}})
+            return res.status(200).json({ where: `id ${deviceId} restaurado`})
         } catch (error) {
             return res.status(500).json(error.message)
         }

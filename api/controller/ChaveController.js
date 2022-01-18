@@ -43,7 +43,7 @@ class ChaveController {
         try {
             const novaChaveCriada = await database.Chaves.create(objChave)
             
-            return res.status(200).json([novaChaveCriada])
+            return res.status(200).json(novaChaveCriada)
         } catch (error) {
             return res.status(500).json(error.message)
         }

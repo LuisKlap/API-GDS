@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "gamavi",
-    "password": "gamavi@123",
-    "database": "gds",
-    "host": "127.0.0.1",
+    "username": "gamavico_gamavicom",
+    "password": "Vy0XGj@ljb+w",
+    "database": "gamavico_gds_bina_node",
+    "host": "gamavi.com.br",
     "dialect": "mysql"
   },
   "test": {
